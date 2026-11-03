@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>hovert settings</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <span class="logo-dot"></span>
+      <h1>hovert</h1>
+    </header>
+    <p class="subtitle">Select any word or phrase on a page to see an instant definition + AI summary.</p>
+
+    <form id="settings-form">
+      <label class="field">
+        <span class="field-label">Provider preset</span>
+        <select id="preset">
+          <option value="openai">OpenAI</option>
+          <option value="gemini">Google Gemini</option>
+          <option value="groq">Groq</option>
+          <option value="custom">Custom endpoint</option>
+        </select>
+      </label>
+
+      <label class="field">
+        <span class="field-label">API endpoint URL</span>
+        <input id="endpoint" type="text" placeholder="https://api.openai.com/v1/chat/completions" autocomplete="off" spellcheck="false" />
+      </label>
+
+      <label class="field">
+        <span class="field-label">API key</span>
+        <input id="apiKey" type="password" placeholder="sk-…" autocomplete="off" spellcheck="false" />
+      </label>
+
+      <label class="field">
+        <span class="field-label">Model name</span>
+        <input id="model" type="text" placeholder="gpt-4o-mini" autocomplete="off" spellcheck="false" />
+      </label>
+
+      <button type="submit" id="save-btn">Save settings</button>
+      <p id="status" class="status" aria-live="polite"></p>
+    </form>
+
+    <section class="support" aria-label="Support the developer">
+      <button type="button" id="support-btn" class="support-btn" aria-expanded="false" aria-controls="support-panel">Help the developer</button>
+      <div id="support-panel" class="support-panel" hidden>
+        <p class="support-title">Thanks for supporting hovert!</p>
+        <img class="support-qr" src="../assets/upi-qr.png" alt="UPI payment QR code for Susanta Sidu" />
+        <p class="support-note">Scan with any UPI payment app</p>
+      </div>
+    </section>
+
+    <footer>
+      <span>Your key is stored locally in this browser only. Nothing is logged or sent anywhere except your chosen API endpoint.</span>
+    </footer>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
