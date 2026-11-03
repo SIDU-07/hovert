@@ -32,6 +32,7 @@ const presetEl = document.getElementById("preset");
 const endpointEl = document.getElementById("endpoint");
 const apiKeyEl = document.getElementById("apiKey");
 const modelEl = document.getElementById("model");
+const languageEl = document.getElementById("language");
 const formEl = document.getElementById("settings-form");
 const statusEl = document.getElementById("status");
 const supportBtn = document.getElementById("support-btn");
@@ -58,11 +59,13 @@ async function loadSettings() {
     endpointEl.value = hovertConfig.endpoint || "";
     apiKeyEl.value = hovertConfig.apiKey || "";
     modelEl.value = hovertConfig.model || "";
+    languageEl.value = hovertConfig.language || "English";
     presetEl.value = detectPresetFromEndpoint(hovertConfig.endpoint);
   } else {
     // Default to OpenAI preset on first run.
     presetEl.value = "openai";
     applyPreset("openai", { onlyIfEmpty: false });
+    languageEl.value = "English";
   }
 }
 
@@ -84,6 +87,7 @@ formEl.addEventListener("submit", async (e) => {
     endpoint: endpointEl.value.trim(),
     apiKey: apiKeyEl.value.trim(),
     model: modelEl.value.trim(),
+    language: (languageEl.value || "English").trim() || "English",
   };
 
   if (!config.endpoint || !config.apiKey || !config.model) {

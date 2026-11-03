@@ -20,11 +20,16 @@
 // Prompt construction
 // ---------------------------------------------------------------------------
 // This system prompt controls the tone/shape of every lookup. Tune freely.
-const SYSTEM_PROMPT = `You are "hovert", an inline dictionary and summarizer embedded in a webpage tooltip.
-The user has selected a word or short phrase on a page. Respond with:
+function buildSystemPrompt(language) {
+  const targetLanguage = (language || "English").trim() || "English";
+
+  return `You are "hovert", an inline dictionary and summarizer embedded in a webpage tooltip.
+The user has selected a word or short phrase on a page. Respond entirely in ${targetLanguage}.
+Return:
 1. A single short line labeled "Definition:" — the clearest, most common meaning (include part of speech in parentheses if it's a single word).
-2. A single short line labeled "Summary:" — a one-sentence plain-English gloss of what the term means or is used for, written for a curious reader.
+2. A single short line labeled "Summary:" — a one-sentence explanation of what the term means or is used for, written for a curious reader.
 Keep the entire response under 60 words total. Do not add extra commentary, greetings, or markdown formatting. If the selection is a full sentence or phrase rather than a single term, treat "Definition" as a concise paraphrase and "Summary" as brief added context.`;
+}
 
 function buildUserPrompt(selectedText, pageContext) {
   const context = pageContext ? `\n\n(Context — page title: "${pageContext}")` : "";
@@ -56,7 +61,7 @@ function detectProvider(endpoint) {
  * @returns {Promise<string>} - Plain text result to render in the tooltip.
  */
 export async function getDefinition(selectedText, config, pageContext) {
-  const { apiKey, endpoint, model } = config || {};
+  const { apiKey, endpoint, model, language } = config || {};
 
   if (!selectedText || !apiKey || !endpoint || !model) {
     throw new Error("Missing configuration. Open the hovert popup and set your API key, endpoint, and model.");
@@ -75,7 +80,8 @@ export async function getDefinition(selectedText, config, pageContext) {
 // OpenAI-compatible provider (OpenAI, Groq, OpenRouter, local servers, etc.)
 // ---------------------------------------------------------------------------
 async function callOpenAICompatible(selectedText, pageContext, config) {
-  const { apiKey, endpoint, model } = config;
+  const { apiKey, endpoint, model, language } = config;
+  const outputLanguage = (language || "English").trim() || "English";
 
   // >>> CUSTOMIZE HERE: headers <<<
   const headers = {
@@ -87,7 +93,7 @@ async function callOpenAICompatible(selectedText, pageContext, config) {
   const body = {
     model: model,
     messages: [
-      { role: "system", content: SYSTEM_PROMPT },
+      { role: "system", content: buildSystemPrompt(outputLanguage) },
       { role: "user", content: buildUserPrompt(selectedText, pageContext) },
     ],
     temperature: 0.3,
@@ -124,7 +130,8 @@ async function callOpenAICompatible(selectedText, pageContext, config) {
 // Google Gemini provider
 // ---------------------------------------------------------------------------
 async function callGemini(selectedText, pageContext, config) {
-  const { apiKey, endpoint, model } = config;
+  const { apiKey, endpoint, model, language } = config;
+  const outputLanguage = (language || "English").trim() || "English";
 
   // Gemini expects the API key as a query param and the model in the URL
   // path. If the user pasted a base endpoint without the model, we build
@@ -148,7 +155,9 @@ async function callGemini(selectedText, pageContext, config) {
     contents: [
       {
         role: "user",
-        parts: [{ text: `${SYSTEM_PROMPT}\n\n${buildUserPrompt(selectedText, pageContext)}` }],
+        parts: [{ text: `${buildSystemPrompt(outputLanguage)}
+
+${buildUserPrompt(selectedText, pageContext)}` }],
       },
     ],
     generationConfig: {
@@ -180,9 +189,6 @@ async function callGemini(selectedText, pageContext, config) {
   return text.trim();
 }
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
 async function safeReadError(response) {
   try {
     const data = await response.json();

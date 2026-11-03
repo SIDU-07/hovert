@@ -9,6 +9,7 @@ It is designed for fast reading and language learning: highlight text, get a pla
 - Instant lookup on selected text
 - Floating tooltip positioned near the selection
 - AI-powered definition + summary using OpenAI, Gemini, Groq, or a custom OpenAI-compatible endpoint
+- Response language selector for output in English, Spanish, French, German, Hindi, Arabic, Bengali, Portuguese, Russian, Japanese, Korean, Chinese, Italian, Turkish, Indonesian, and Vietnamese
 - Browser-local API key storage
 - Built-in text-to-speech for selected words
 - Works across most websites with one-click configuration
@@ -51,7 +52,8 @@ hovert/
 1. Click the hovert icon in the browser toolbar.
 2. Choose a provider preset or use a custom endpoint.
 3. Enter your API key, endpoint URL, and model name.
-4. Save the settings.
+4. Choose the response language you want the definition and summary to appear in.
+5. Save the settings.
 
 Supported provider patterns include:
 
